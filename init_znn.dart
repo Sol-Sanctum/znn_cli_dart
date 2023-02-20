@@ -81,7 +81,8 @@ void help() {
   print('    spork.create name description');
   print('    spork.activate id');
   print('  HTLC');
-  print('    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashLock hashType]');
+  print(
+      '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashLock hashType]');
   print('    htlc.unlock id [preimage]');
   print('    htlc.reclaim id');
   print('    htlc.reclaimAll');
@@ -179,10 +180,10 @@ Future<int> initZnn(List<String> args, Function handler) async {
     'spork.activate',
     'htlc.create',
     'htlc.reclaim',
-    'htlc.reclaimAll',
     'htlc.unlock',
+    'htlc.denyProxy',
+    'htlc.allowProxy',
     'htlc.monitor',
-    'htlc.monitorAll',
   ];
 
   List<String> commandsWithoutKeyStore = [
@@ -198,9 +199,8 @@ Future<int> initZnn(List<String> args, Function handler) async {
     'spork.list',
     'createHash',
     'htlc.get',
-    'htlc.timeLocked',
-    'htlc.hashLocked',
     'htlc.inspect',
+    'htlc.getProxyStatus',
   ];
 
   List<String> commandsWithoutConnection = [

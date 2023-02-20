@@ -1447,20 +1447,7 @@ Future<void> handleCli(List<String> args) async {
           .create(token, amount, hashLockedAddress, expirationTime, hashType,
               keyMaxSize, hashLock.getBytes()));
 
-      stdout.write('Submitted htlc. Waiting for confirmation...');
-      bool confirmed = false;
-
-      while (!confirmed) {
-        await Future.delayed(Duration(seconds: 2));
-        try {
-          await znnClient.embedded.htlc.getHtlcInfoById(block.hash);
-          confirmed = true;
-          print('\nhtlc id: ${green(block.hash.toString())}');
-        } catch (e) {
-          stdout.write(".");
-        }
-      }
-
+      print('Submitted htlc with id ${green(block.hash.toString())}');
       print('Done');
       break;
 

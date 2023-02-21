@@ -1474,7 +1474,7 @@ Future<void> handleCli(List<String> args) async {
 
       HtlcInfo htlc;
       try {
-        htlc = await znnClient.embedded.htlc.getHtlcInfoById(id);
+        htlc = await znnClient.embedded.htlc.getById(id);
         hashType = htlc.hashType;
       } catch (e) {
         print('${red("Error!")} The htlc id $id does not exist');
@@ -1482,7 +1482,7 @@ Future<void> handleCli(List<String> args) async {
       }
 
       if (!await znnClient.embedded.htlc
-          .getHtlcProxyUnlockStatus(htlc.hashLocked)) {
+          .getProxyUnlockStatus(htlc.hashLocked)) {
         print('${red("Error!")} Cannot unlock htlc. Permission denied');
         break;
       } else if (htlc.expirationTime <= currentTime) {
@@ -1550,7 +1550,7 @@ Future<void> handleCli(List<String> args) async {
 
       HtlcInfo htlc;
       try {
-        htlc = await znnClient.embedded.htlc.getHtlcInfoById(id);
+        htlc = await znnClient.embedded.htlc.getById(id);
       } catch (e) {
         print('${red("Error!")} The htlc id $id does not exist');
         break;
@@ -1617,7 +1617,7 @@ Future<void> handleCli(List<String> args) async {
         break;
       }
 
-      await znnClient.embedded.htlc.getHtlcProxyUnlockStatus(address).then(
+      await znnClient.embedded.htlc.getProxyUnlockStatus(address).then(
           (value) => print(
               'Htlc proxy unlocking is ${(value) ? green('allowed') : red('denied')} for ${address.toString()}'));
 
@@ -1645,7 +1645,7 @@ Future<void> handleCli(List<String> args) async {
 
       HtlcInfo htlc;
       try {
-        htlc = await znnClient.embedded.htlc.getHtlcInfoById(id);
+        htlc = await znnClient.embedded.htlc.getById(id);
       } catch (e) {
         print('The htlc id $id does not exist');
         break;
@@ -1684,7 +1684,7 @@ Future<void> handleCli(List<String> args) async {
       }
 
       try {
-        htlc = await znnClient.embedded.htlc.getHtlcInfoById(id);
+        htlc = await znnClient.embedded.htlc.getById(id);
       } catch (e) {
         print('The htlc id $id does not exist');
         break;

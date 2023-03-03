@@ -1454,7 +1454,7 @@ Future<void> handleCli(List<String> args) async {
     case ('htlc.unlock'):
       if (args.length < 2 || args.length > 3) {
         print('Incorrect number of arguments. Expected:');
-        print('htlc.unlock id [preimage]');
+        print('htlc.unlock id preimage');
         break;
       }
 

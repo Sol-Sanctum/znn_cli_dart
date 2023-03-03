@@ -83,15 +83,14 @@ void help() {
   print('  HTLC');
   print(
       '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashLock hashType]');
-  print('    htlc.unlock id [preimage]');
+  print('    htlc.unlock id preimage');
   print('    htlc.reclaim id');
-  print('    htlc.reclaimAll');
+  print('    htlc.denyProxy');
+  print('    htlc.allowProxy');
+  print('    htlc.getProxyStatus address');
   print('    htlc.get id');
-  print('    htlc.hashLocked address [pageIndex pageSize]');
-  print('    htlc.timeLocked address [pageIndex pageSize]');
   print('    htlc.inspect blockHash');
   print('    htlc.monitor id');
-  print('    htlc.monitorAll');
 }
 
 Future<int> initZnn(List<String> args, Function handler) async {

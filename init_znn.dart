@@ -82,7 +82,7 @@ void help() {
   print('    spork.activate id');
   print('  HTLC');
   print(
-      '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashLock hashType]');
+      '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashType hashLock]');
   print('    htlc.unlock id preimage');
   print('    htlc.reclaim id');
   print('    htlc.denyProxy');

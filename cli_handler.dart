@@ -1297,7 +1297,7 @@ Future<void> handleCli(List<String> args) async {
       if (args.length < 5 || args.length > 7) {
         print('Incorrect number of arguments. Expected:');
         print(
-            'htlc.create hashLockedAddress tokenStandard amount expirationTime [hashLock hashType]');
+            'htlc.create hashLockedAddress tokenStandard amount expirationTime [hashType hashLock]');
         break;
       }
 
@@ -1374,9 +1374,9 @@ Future<void> handleCli(List<String> args) async {
       }
       Token? token = await znnClient.embedded.token.getByZts(tokenStandard);
 
-      if (args.length == 7) {
+      if (args.length >= 6) {
         try {
-          hashType = args[6].toNum().toInt();
+          hashType = args[5].toNum().toInt();
         } catch (e) {
           print('${red("Error!")} hash type must be an integer.');
           print('Supported hash types:');
@@ -1386,9 +1386,9 @@ Future<void> handleCli(List<String> args) async {
         }
       }
 
-      if (args.length >= 6) {
+      if (args.length == 7) {
         try {
-          hashLock = Hash.parse(args[5]);
+          hashLock = Hash.parse(args[6]);
         } catch (e) {
           print('${red("Error!")} hashLock is not a valid hash');
           break;
@@ -1396,19 +1396,13 @@ Future<void> handleCli(List<String> args) async {
       } else {
         preimage = generatePreimage(htlcPreimageDefaultLength);
         switch (hashType) {
-          case 0:
-            hashLock = Hash.digest(preimage);
-            break;
           case 1:
             hashLock = Hash.fromBytes(await Crypto.sha256Bytes(preimage));
             break;
           default:
-            print(
-                '${red("Error!")} Invalid hash type. Value $hashType not supported.');
-            ok = false;
+            hashLock = Hash.digest(preimage);
             break;
         }
-        if (!ok) break;
       }
 
       try {

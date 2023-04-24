@@ -1426,7 +1426,7 @@ Future<void> handleCli(List<String> args) async {
       int currentTime = currentFrontierMomentum.timestamp;
       expirationTime += currentTime;
 
-      if (args.length >= 6) {
+      if (args.length == 7) {
         print(
             'Creating htlc with amount ${formatAmount(amount, token!.decimals)} ${token.symbol}');
       } else {

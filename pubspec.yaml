@@ -9,11 +9,9 @@ environment:
 dependencies:
   dcli: ^1.7.1
   znn_sdk_dart:
-    path:
-      ../znn_sdk_dart
-    #git:
-    #  url: https://github.com/sol-sanctum/znn_sdk_dart.git
-    #  ref: htlc_spork #spork_htlc
+    git:
+      url: https://github.com/sol-sanctum/znn_sdk_dart.git
+      ref:  spork_htlc #todo: update to htlc_spork
 
 dev_dependencies:
   test: ^1.17.9

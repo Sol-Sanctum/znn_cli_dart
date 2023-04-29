@@ -724,9 +724,11 @@ packages:
   znn_sdk_dart:
     dependency: "direct main"
     description:
-      path: "../znn_sdk_dart"
-      relative: true
-    source: path
+      path: "."
+      ref: spork_htlc
+      resolved-ref: "5239cc3a3209610a119b8f0b8070894d42b40e50"
+      url: "https://github.com/sol-sanctum/znn_sdk_dart.git"
+    source: git
     version: "0.0.4"
 sdks:
   dart: ">=2.19.0 <3.0.0"

@@ -1213,7 +1213,8 @@ Future<void> handleCli(List<String> args) async {
       }
 
       print('Creating spork...');
-      await znnClient.send(znnClient.embedded.spork.create(name, description));
+      await znnClient
+          .send(znnClient.embedded.spork.createSpork(name, description));
       print('Done');
       break;
 
@@ -1226,7 +1227,7 @@ Future<void> handleCli(List<String> args) async {
 
       Hash id = Hash.parse(args[1]);
       print('Activating spork...');
-      await znnClient.send(znnClient.embedded.spork.activate(id));
+      await znnClient.send(znnClient.embedded.spork.activateSpork(id));
       print('Done');
       break;
 
@@ -1244,7 +1245,7 @@ Future<void> handleCli(List<String> args) async {
 
       if (args.length >= 2) {
         try {
-          hashType = args[1].toNum().toInt();
+          hashType = int.parse(args[1]);
           if (hashType > 1) {
             print(
                 '${red("Error!")} Invalid hash type. Value $hashType not supported.');
@@ -1261,7 +1262,7 @@ Future<void> handleCli(List<String> args) async {
 
       if (args.length == 3) {
         try {
-          preimageLength = args[2].toNum().toInt();
+          preimageLength = int.parse(args[2]);
         } catch (e) {
           print('${red("Error!")} preimageLength must be an integer.');
           break;
@@ -1321,7 +1322,6 @@ Future<void> handleCli(List<String> args) async {
       }
 
       try {
-        tokenStandard = TokenStandard.bySymbol(args[2]);
         if (args[2].toLowerCase() == 'znn') {
           tokenStandard = znnZts;
         } else if (args[2].toLowerCase() == 'qsr') {
@@ -1336,8 +1336,10 @@ Future<void> handleCli(List<String> args) async {
       }
 
       try {
-        amount = args[3].toNum().extractDecimals(
-            (await znnClient.embedded.token.getByZts(tokenStandard))!.decimals);
+        amount = (double.parse(args[3]) *
+                (await znnClient.embedded.token.getByZts(tokenStandard))!
+                    .decimalsExponent())
+            .round();
       } catch (e) {
         print('${red("Error!")} amount is not a valid number');
         break;
@@ -1376,7 +1378,7 @@ Future<void> handleCli(List<String> args) async {
 
       if (args.length >= 6) {
         try {
-          hashType = args[5].toNum().toInt();
+          hashType = int.parse(args[5]);
         } catch (e) {
           print('${red("Error!")} hash type must be an integer.');
           print('Supported hash types:');
@@ -1406,7 +1408,7 @@ Future<void> handleCli(List<String> args) async {
       }
 
       try {
-        expirationTime = args[4].toNum().toInt();
+        expirationTime = int.parse(args[4]);
       } catch (e) {
         print('${red("Error!")} expirationTime must be an integer.');
         break;
@@ -1509,7 +1511,7 @@ Future<void> handleCli(List<String> args) async {
           break;
       }
 
-      if (preimageCheck != Hash.fromBytes(htlc.hashLock!)) {
+      if (preimageCheck != Hash.fromBytes(htlc.hashLock)) {
         print('${red('Error!')} preimage does not match the hashlock');
         break;
       }
@@ -1578,8 +1580,9 @@ Future<void> handleCli(List<String> args) async {
         break;
       }
 
-      await znnClient.send(znnClient.embedded.htlc.denyProxy()).then((_) =>
-          print('Htlc proxy unlocking is denied for ${address.toString()}'));
+      await znnClient.send(znnClient.embedded.htlc.denyProxyUnlock()).then(
+          (_) => print(
+              'Htlc proxy unlocking is denied for ${address.toString()}'));
 
       print('Done');
       break;
@@ -1591,8 +1594,9 @@ Future<void> handleCli(List<String> args) async {
         break;
       }
 
-      await znnClient.send(znnClient.embedded.htlc.allowProxy()).then((_) =>
-          print('Htlc proxy unlocking is allowed for ${address.toString()}'));
+      await znnClient.send(znnClient.embedded.htlc.allowProxyUnlock()).then(
+          (_) => print(
+              'Htlc proxy unlocking is allowed for ${address.toString()}'));
 
       print('Done');
       break;
@@ -1650,7 +1654,7 @@ Future<void> handleCli(List<String> args) async {
               'Htlc id ${htlc.id} with amount ${formatAmount(htlc.amount, token!.decimals)} ${token.symbol}'));
       if (htlc.expirationTime > currentTime) {
         print(
-            '   Can be unlocked by ${htlc.hashLocked} with hashlock ${Hash.fromBytes(htlc.hashLock!)} hashtype ${htlc.hashType}');
+            '   Can be unlocked by ${htlc.hashLocked} with hashlock ${Hash.fromBytes(htlc.hashLock)} hashtype ${htlc.hashType}');
         print(
             '   Can be reclaimed in ${format(Duration(seconds: htlc.expirationTime - currentTime))} by ${htlc.timeLocked}');
       } else {

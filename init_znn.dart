@@ -303,6 +303,7 @@ Future<int> initZnn(List<String> args, Function handler) async {
     await znnClient.wsClient.initialize(_urlOption!, retry: false);
     await znnClient.ledger.getFrontierMomentum().then((value) {
       netId = value.chainIdentifier.toInt();
+      //chainId = value.chainIdentifier.toInt();
     });
   }
 

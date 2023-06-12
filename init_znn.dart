@@ -4,13 +4,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dcli/dcli.dart';
-import 'package:logging/logging.dart';
+import 'package:logging/logging.dart' as log;
 import 'package:path/path.dart' as path;
 import 'package:znn_sdk_dart/znn_sdk_dart.dart';
 
 const znnDaemon = 'znnd';
 const znnCli = 'znn-cli';
-const znnCliVersion = '0.0.4';
+const znnCliVersion = '0.0.5';
 
 String _argsUsage = '';
 
@@ -31,6 +31,7 @@ void help() {
   print('    unconfirmed');
   print('    balance');
   print('    frontierMomentum');
+  print('    createHash "string" [hashType preimageLength]');
   print('    version');
   print('  Plasma');
   print('    plasma.list [pageIndex pageCount]');
@@ -75,6 +76,21 @@ void help() {
   print('    wallet.dumpMnemonic');
   print('    wallet.deriveAddresses start end');
   print('    wallet.export filePath');
+  print('  Spork');
+  print('    spork.list');
+  print('    spork.create name description');
+  print('    spork.activate id');
+  print('  HTLC');
+  print(
+      '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashType hashLock]');
+  print('    htlc.unlock id preimage');
+  print('    htlc.reclaim id');
+  print('    htlc.denyProxy');
+  print('    htlc.allowProxy');
+  print('    htlc.getProxyStatus address');
+  print('    htlc.get id');
+  print('    htlc.inspect blockHash');
+  print('    htlc.monitor id');
 }
 
 Future<int> initZnn(List<String> args, Function handler) async {
@@ -118,6 +134,7 @@ Future<int> initZnn(List<String> args, Function handler) async {
   }
 
   if (argResult.wasParsed('verbose')) {
+    log.hierarchicalLoggingEnabled = true;
     logger.level = Level.INFO;
   }
 
@@ -158,6 +175,14 @@ Future<int> initZnn(List<String> args, Function handler) async {
     'wallet.dumpMnemonic',
     'wallet.deriveAddresses',
     'wallet.export',
+    'spork.create',
+    'spork.activate',
+    'htlc.create',
+    'htlc.reclaim',
+    'htlc.unlock',
+    'htlc.denyProxy',
+    'htlc.allowProxy',
+    'htlc.monitor',
   ];
 
   List<String> commandsWithoutKeyStore = [
@@ -170,6 +195,11 @@ Future<int> initZnn(List<String> args, Function handler) async {
     'wallet.createNew',
     'wallet.createFromMnemonic',
     'wallet.list',
+    'spork.list',
+    'createHash',
+    'htlc.get',
+    'htlc.inspect',
+    'htlc.getProxyStatus',
   ];
 
   List<String> commandsWithoutConnection = [
@@ -179,6 +209,7 @@ Future<int> initZnn(List<String> args, Function handler) async {
     'wallet.list',
     'wallet.dumpMnemonic',
     'wallet.deriveAddresses',
+    'createHash',
   ];
 
   if (!(commandsWithoutKeyStore.contains(args[0]) ||
@@ -270,6 +301,10 @@ Future<int> initZnn(List<String> args, Function handler) async {
     }
 
     await znnClient.wsClient.initialize(_urlOption!, retry: false);
+    await znnClient.ledger.getFrontierMomentum().then((value) {
+      netId = value.chainIdentifier.toInt();
+      //chainId = value.chainIdentifier.toInt();
+    });
   }
 
   await handler(args);

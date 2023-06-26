@@ -6,12 +6,12 @@ all:
 windows:
 	-mkdir build
 	dart pub get
-	dart compile exe cli_handler.dart -o build\znn-cli.exe
+	dart compile exe znn-cli.dart -o build\znn-cli.exe
 	copy .\Resources\* .\build\
 	
 linux: 
 	mkdir -p build
 	dart pub get
-	dart compile exe cli_handler.dart -o build/znn-cli
+	dart compile exe znn-cli.dart -o build/znn-cli
 	cp ./Resources/* ./build
 	

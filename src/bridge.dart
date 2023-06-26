@@ -25,7 +25,7 @@ void bridgeMenu() {
   print('    bridge.unwrap.redeemAll [bool]');
   print('    bridge.unwrap.list');
   print('    bridge.unwrap.listByAddress toAddress');
-  print('    bridge.unwrap.listUnredeemed');
+  print('    bridge.unwrap.listUnredeemed [toAddress]');
   print('    bridge.unwrap.get transactionHash logIndex');
   print('    bridge.guardian.proposeAdmin address');
 }

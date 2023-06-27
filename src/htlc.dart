@@ -10,7 +10,7 @@ import 'src.dart';
 void htlcMenu() {
   print('  ${white('HTLC')}');
   print(
-      '    htlc.create hashLockedAddress tokenStandard amount expirationTime [hashType hashLock]');
+      '    htlc.create hashLockedAddress tokenStandard amount expirationTime (in hours) [hashType hashLock]');
   print('    htlc.unlock id preimage');
   print('    htlc.reclaim id');
   print('    htlc.get id');
@@ -82,7 +82,7 @@ Future<void> _create() async {
   if (args.length < 5 || args.length > 7) {
     print('Incorrect number of arguments. Expected:');
     print(
-        'htlc.create hashLockedAddress tokenStandard amount expirationTime [hashType hashLock]');
+        'htlc.create hashLockedAddress tokenStandard amount expirationTime (in hours) [hashType hashLock]');
     return;
   }
 
@@ -95,8 +95,8 @@ Future<void> _create() async {
   int hashType = 0;
   List<int> preimage = generatePreimage(htlcPreimageDefaultLength);
 
-  int htlcTimelockMinHours = 60 * 60; // 1 hour
-  int htlcTimelockMaxHours = htlcTimelockMinHours * 24; // 1 day
+  int htlcTimelockMinHours = 1;
+  int htlcTimelockMaxHours = htlcTimelockMinHours * 24;
 
   try {
     hashLockedAddress = Address.parse(args[1]);
@@ -156,10 +156,11 @@ Future<void> _create() async {
   if (expirationTime < htlcTimelockMinHours ||
       expirationTime > htlcTimelockMaxHours) {
     print(
-        '${red('Error!')} expirationTime (seconds) must be at least $htlcTimelockMinHours and at most $htlcTimelockMaxHours.');
+        '${red('Error!')} expirationTime (hours) must be at least $htlcTimelockMinHours and at most $htlcTimelockMaxHours.');
     return;
   }
 
+  expirationTime *= 60 * 60; // convert to seconds
   final duration = Duration(seconds: expirationTime);
   format(Duration d) => d.toString().split('.').first.padLeft(8, '0');
   Momentum currentFrontierMomentum =

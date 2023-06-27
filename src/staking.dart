@@ -85,9 +85,9 @@ Future<void> _register() async {
         '${red('Invalid duration')}: ($duration) $stakeUnitDurationName. It must be between 1 and 12');
     return;
   }
-  if (amount < stakeMinZnnAmount) {
+  if (amount < stakeMinAmount) {
     print(
-        '${red('Invalid amount')}: ${AmountUtils.addDecimals(amount, coinDecimals)} ${green('ZNN')}. Minimum staking amount is ${AmountUtils.addDecimals(stakeMinZnnAmount, coinDecimals)}');
+        '${red('Invalid amount')}: ${AmountUtils.addDecimals(amount, coinDecimals)} ${green('ZNN')}. Minimum staking amount is ${AmountUtils.addDecimals(stakeMinAmount, coinDecimals)}');
     return;
   }
   AccountInfo balance = await znnClient.ledger.getAccountInfoByAddress(address);

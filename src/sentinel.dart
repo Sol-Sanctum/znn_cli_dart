@@ -8,6 +8,7 @@ void sentinelMenu() {
   print('    sentinel.register');
   print('    sentinel.revoke');
   print('    sentinel.collect');
+  print('    sentinel.depositQsr');
   print('    sentinel.withdrawQsr');
 }
 
@@ -31,6 +32,13 @@ Future<void> sentinelFunctions() async {
     case 'collect':
       verbose ? print('Description: Collect sentinel rewards') : null;
       await _collect();
+      return;
+
+    case 'depositQsr':
+      verbose
+          ? print('Description: Deposit QSR to the sentinel contract')
+          : null;
+      await _depositQsr();
       return;
 
     case 'withdrawQsr':
@@ -144,6 +152,30 @@ Future<void> _collect() async {
   print('Done');
   print(
       'Use ${green('receiveAll')} to collect your Sentinel reward(s) after 1 momentum');
+}
+
+Future<void> _depositQsr() async {
+  AccountInfo balance = await znnClient.ledger.getAccountInfoByAddress(address);
+  BigInt depositedQsr =
+      await znnClient.embedded.sentinel.getDepositedQsr(address);
+  print(
+      'You have $depositedQsr / $sentinelRegisterQsrAmount ${blue('QSR')} deposited for the Sentinel');
+
+  if (balance.qsr()! < sentinelRegisterQsrAmount) {
+    print(
+        'Required ${AmountUtils.addDecimals(sentinelRegisterQsrAmount, coinDecimals)} ${blue('QSR')}');
+    print(
+        'Available ${AmountUtils.addDecimals(balance.qsr()!, coinDecimals)} ${blue('QSR')}');
+    return;
+  }
+
+  if (depositedQsr < sentinelRegisterQsrAmount) {
+    print(
+        'Depositing ${sentinelRegisterQsrAmount - depositedQsr} ${blue('QSR')} for the Sentinel');
+    await znnClient.send(znnClient.embedded.sentinel
+        .depositQsr(sentinelRegisterQsrAmount - depositedQsr));
+  }
+  print('Done');
 }
 
 Future<void> _withdrawQsr() async {

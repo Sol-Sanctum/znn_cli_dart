@@ -16,9 +16,7 @@ void bridgeMenu() {
   print(
       '    bridge.wrap.token networkClass chainId toAddress amount tokenStandard');
   print('    bridge.wrap.list');
-  print('    bridge.wrap.listByAddress toAddress');
-  print(
-      '    bridge.wrap.listByAddressNetworkChain toAddress networkClass chainId');
+  print('    bridge.wrap.listByAddress toAddress [networkClass chainId]');
   print('    bridge.wrap.listUnsigned');
   print('    bridge.wrap.get id');
   print('    bridge.unwrap.redeem transactionHash logIndex');
@@ -320,14 +318,6 @@ Future<void> _wrapFunctions() async {
       await _wrapListByAddress();
       return;
 
-    case 'listByAddressNetworkChain':
-      verbose
-          ? print(
-              'Description: List all wrap token requests made by EVM address for a given network class and chain id')
-          : null;
-      await _wrapListByAddressNetworkChain();
-      return;
-
     case 'listUnsigned':
       verbose
           ? print('Description: List all unsigned wrap token requests')
@@ -418,41 +408,24 @@ Future<void> _wrapList() async {
 }
 
 Future<void> _wrapListByAddress() async {
-  if (args.length != 2) {
+  if (args.length != 2 || args.length != 4) {
     print('Incorrect number of arguments. Expected:');
-    print('bridge.wrap.listByAddress toAddress');
+    print('bridge.wrap.listByAddress toAddress [networkClass] [chainId]');
     return;
   }
-
+  WrapTokenRequestList list;
   String toAddress = args[1];
-  WrapTokenRequestList list = await znnClient.embedded.bridge
-      .getAllWrapTokenRequestsByToAddress(toAddress);
 
-  if (list.count > 0) {
-    print('Count: ${list.count}');
-    for (WrapTokenRequest request in list.list) {
-      await _printWrapTokenRequest(request);
-    }
+  if (args.length == 4) {
+    int networkClass = int.parse(args[2]);
+    int chainId = int.parse(args[3]);
+    list = await znnClient.embedded.bridge
+        .getAllWrapTokenRequestsByToAddressNetworkClassAndChainId(
+            toAddress, networkClass, chainId);
   } else {
-    print('No wrap requests found for $toAddress');
+    list = await znnClient.embedded.bridge
+        .getAllWrapTokenRequestsByToAddress(toAddress);
   }
-}
-
-Future<void> _wrapListByAddressNetworkChain() async {
-  if (args.length != 4) {
-    print('Incorrect number of arguments. Expected:');
-    print(
-        'bridge.wrap.listByAddressNetworkChain toAddress networkClass chainId');
-    return;
-  }
-
-  String toAddress = args[1];
-  int networkClass = int.parse(args[2]);
-  int chainId = int.parse(args[3]);
-
-  WrapTokenRequestList list = await znnClient.embedded.bridge
-      .getAllWrapTokenRequestsByToAddressNetworkClassAndChainId(
-          toAddress, networkClass, chainId);
 
   if (list.count > 0) {
     print('Count: ${list.count}');

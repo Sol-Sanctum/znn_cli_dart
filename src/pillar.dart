@@ -11,6 +11,7 @@ void pillarMenu() {
   print('    pillar.delegate name');
   print('    pillar.undelegate');
   print('    pillar.collect');
+  print('    pillar.depositQsr');
   print('    pillar.withdrawQsr');
 }
 
@@ -44,6 +45,11 @@ Future<void> pillarFunctions() async {
     case 'collect':
       verbose ? print('Description: Collect pillar rewards') : null;
       await _collect();
+      return;
+
+    case 'depositQsr':
+      verbose ? print('Description: Deposit QSR to the pillar contract') : null;
+      await _depositQsr();
       return;
 
     case 'withdrawQsr':
@@ -176,6 +182,32 @@ Future<void> _collect() async {
   print('Done');
   print(
       'Use ${green('receiveAll')} to collect your Pillar reward(s) after 1 momentum');
+}
+
+Future<void> _depositQsr() async {
+  AccountInfo balance = await znnClient.ledger.getAccountInfoByAddress(address);
+  BigInt qsrAmount = await znnClient.embedded.pillar.getQsrRegistrationCost();
+  BigInt depositedQsr =
+      await znnClient.embedded.pillar.getDepositedQsr(address);
+
+  print(
+      'You have $depositedQsr / $qsrAmount ${blue('QSR')} deposited for the Pillar registration');
+
+  if (balance.qsr()! < qsrAmount) {
+    print(
+        'Required ${AmountUtils.addDecimals(qsrAmount, coinDecimals)} ${blue('QSR')}');
+    print(
+        'Available ${AmountUtils.addDecimals(balance.qsr()!, coinDecimals)} ${blue('QSR')}');
+    return;
+  }
+
+  if (depositedQsr < qsrAmount) {
+    print(
+        'Depositing ${AmountUtils.addDecimals(qsrAmount - depositedQsr, coinDecimals)} ${blue('QSR')} for the Pillar registration');
+    await znnClient
+        .send(znnClient.embedded.pillar.depositQsr(qsrAmount - depositedQsr));
+  }
+  print('Done');
 }
 
 Future<void> _withdrawQsr() async {

@@ -235,7 +235,7 @@ Future<void> handleCli() async {
     } else if (command[0].contains('bridge')) {
       await bridgeFunctions();
     } else if (command[0].contains('liquidity')) {
-      await liqidityFunctions();
+      await liquidityFunctions();
     } else if (command[0].contains('orchestrator')) {
       await orchestatorFunctions();
     } else {

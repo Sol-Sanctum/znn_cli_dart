@@ -294,6 +294,10 @@ Future<void> _stake() async {
     return;
   }
 
+  if (!await hasBalance(znnClient, address, tokenStandard, amount)) {
+    return;
+  }
+
   LiquidityInfo info = await znnClient.embedded.liquidity.getLiquidityInfo();
   if (info.isHalted) {
     print('${red('Error!')} Liquidity contract is halted');
